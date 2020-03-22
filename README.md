@@ -6,7 +6,7 @@ This repository contains R and JAGS scripts for "Modelling dispersal using singl
 
 ### R scripts
 
-* function_simdata_ver4.R: an R function used to produce simulated capture-recapture locations
+* `function_simdata_ver4.R`: an R function used to produce simulated capture-recapture locations
 * figure_Pstay_v1.R: an R script for figure 1
 * figure_delta_v1.R: an R script for figure 2
 * figure_deltaCI_v1.R: an R script for figure 3
