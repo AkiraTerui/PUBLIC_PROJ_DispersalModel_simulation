@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1584893043341.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "EDB60DBD",
+    "lastKnownWriteTime" : 1584458800,
+    "last_content_update" : 1584458800,
+    "path" : "~/GitHub/PUBLIC_PROJ_DispersalModel_simulation/function_simdata_ver4.R",
+    "project_path" : "function_simdata_ver4.R",
+    "properties" : {
+        "cursorPosition" : "23,0",
+        "scrollLine" : "9"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
