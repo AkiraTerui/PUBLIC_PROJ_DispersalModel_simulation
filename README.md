@@ -1,6 +1,6 @@
 # PUBLIC_PROJ_DispersalModel_simulation
 
-This repository contains R and JAGS scripts for "Modeling dispersal using single-occassion capture-recapture data"
+This repository contains R and JAGS scripts for "Modeling dispersal using capture-recapture data: a comparison of dispersal models"
  
 ## File descriptions
 
