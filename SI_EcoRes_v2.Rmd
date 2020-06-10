@@ -1,0 +1,533 @@
+---
+title: "Supporting Information"
+output:
+  pdf_document:
+    fig_width: 8
+    fig_height: 8
+  html_document:
+    df_print: paged
+editor_options: 
+  chunk_output_type: console
+---
+
+## Article Information
+- **Title**: "Modeling dispersal using capture-recapture data: a comparison of dispersal models"
+- **Journal**: Ecological Research
+- **Author**: Akira Terui
+
+## Contents
+  - Tables 
+    - **Table S1**: Bias of estimated dispersal parameter (true dispersal parameter $\theta_{true} = 50$)
+    - **Table S2**: Bias of estimated dispersal parameter (true dispersal parameter $\theta_{true} = 100$)
+    - **Table S3**: Bias of estimated dispersal parameter (true dispersal parameter $\theta_{true} = 150$)
+    - **Table S4**: Bias of estimated dispersal parameter (true dispersal parameter $\theta_{true} = 200$)
+    - **Table S5**: Bias of estimated dispersal parameter (true dispersal parameter $\theta_{true} = 250$)
+    - **Table S6**: Bias of estimated dispersal parameter (true dispersal parameter $\theta_{true} = 300$)
+  
+  - Figures
+    - **Figure S1**: Boxplots of the 95%CIs of estimated dispersal parameter (Laplace)
+    - **Figure S2**: Boxplots of the 95%CIs of estimated dispersal parameter (Gaussian)
+    - **Figure S3**: Proportion of stayers or recaptures with individual heterogeneity in true recapture probability (Laplace)
+    - **Figure S4**: Proportion of stayers or recaptures with individual heterogeneity in true recapture probability (Gaussian)
+    - **Figure S5**: Boxplots of % bias in the estimated dispersal parameter (Laplace) with individual-level heterogeneity in true recapture probability
+    - **Figure S6**: Boxplots of % bias in the estimated dispersal parameter (Gaussian) with individual-level heterogeneity in true recapture probability
+    - **Figure S7**: Boxplots of the 95% CIs of estimated dispersal parameter (Laplace) with individual-level heterogeneity in true recapture probability
+    - **Figure S8**: Boxplots of the 95% CIs of estimated dispersal parameter (Gaussian) with individual-level heterogeneity in true recapture probability
+
+\pagebreak
+
+```{r library, include = F}
+
+# Libraries
+  library(knitr)
+  library(kableExtra)
+  library(tidyverse)
+  library(egg)
+
+```
+
+
+<!----tables---->
+
+```{r TableDATA, include = F}
+
+# Read data ----
+  source("datasort01_Laplace.R")
+  dat_Laplace <- dat
+  source("datasort02_Gaussian.R")
+  dat_Gaussian <- dat
+  
+  ## Create columns Bias and CItrue
+  dat_Laplace <- dat_Laplace %>%
+                    mutate(Bias = delta_med - DELTA) %>%
+                    mutate(theta = DELTA) %>%
+                    mutate(CItrue = ifelse(DELTA <= delta_upper & DELTA >= delta_lower, 1, 0))
+                    
+  dat_Gaussian <- dat_Gaussian %>%
+                    mutate(Bias = sigma_med - SIGMA) %>%
+                    mutate(theta = SIGMA) %>%
+                    mutate(CItrue = ifelse(SIGMA <= sigma_upper & SIGMA >= sigma_lower, 1, 0))
+
+# Table ----
+  ## define function
+  fun_table <- function(data, parameter = c("N", "LEN", "DELTA", "SIGMA", "PHI")){
+    paraID <- which(colnames(data) %in% parameter)
+    para <- sapply(paraID, function(i)unique(data[,i]) )
+    para.set <<- expand.grid(N = para[[1]],
+                            LEN = para[[2]],
+                            THETA = para[[3]],
+                            PHI = para[[4]])
+    
+    for(i in 1:nrow(para.set)){
+      Ind <- sapply(1:length(paraID), function(x) data[,paraID[x]]==para.set[i,x])
+      dat.sub <<- data[rowSums(Ind) == length(paraID),]
+      uvalue <<- sapply(dat.sub[,paraID], unique)
+      if(any(uvalue != para.set[i,1:length(paraID)]) ) { print(dat.sub); stop("error") }
+      if(length(unique(dat.sub$theta)) != 1) { print(dat.sub); stop("error") }
+      para.set[i,c("m1_Bias", "m2_Bias", "m3_Bias")] <- tapply(dat.sub$Bias, dat.sub$model_code,
+                                                               function(x) round(100*mean(x)/unique(dat.sub$theta), 1) )
+      para.set[i,c("m1_CIp", "m2_CIp", "m3_CIp")] <- tapply(dat.sub$CItrue, dat.sub$model_code, mean)
+    }
+    
+    return(para.set)
+  }
+
+  ## Split dataframes
+  reL <- fun_table(dat_Laplace); reL$Kernel <- "Laplace"
+  reG <- fun_table(dat_Gaussian); reG$Kernel <- "Gaussian"
+  re <- merge(reL, reG, all = T)
+  
+  theta <- seq(50, 300, by = 50)
+  DL <- list(NULL)
+  for(i in 1:length(theta)){
+    DL[[i]] <- re %>%
+      dplyr::filter(THETA == theta[i]) %>%
+      dplyr::select(Kernel, N, LEN, PHI, m1_Bias, m2_Bias, m3_Bias) %>%
+      dplyr::arrange(Kernel) %>%
+      kable(col.names = c("Kernel", "$N$", "$L$", "$\\phi$",
+                          "$Bias_{simple} (\\%)$", "$Bias_{trunc} (\\%)$", "$Bias_{disp-obs} (\\%)$"),
+            format = "markdown")
+    names(DL)[i] <- paste0("Table S", i)
+  }
+  
+```
+
+
+```{r TableTEXT, include = F}
+
+theta <- seq(50, 300, by = 50)
+
+TableTEXT <- NULL
+for(i in 1:length(theta)){
+TableTEXT[i] <- paste0("**`r names(DL)[",i,"]`** ", "Bias of dispersal parameter estimated from simulated datasets with the true dispersal parameter $\\theta_{true} =`r theta[",i,"]`$ ($\\theta_{true}$ is either $\\delta_{true}$ [Laplace] or $\\sigma_{true}$ [Gaussian]).The percent bias of estimated dispersal parameter was calculated as $Bias(\\%) = 100~E(\\theta_{est} - \\theta_{true})/\\theta_{true}$, where  $E(\\theta_{est} - \\theta_{true})$ is the average of 50 estimates for a given simulation scenario (each row corresponds to a simulation scenario). Subscripts denote different dispersal models (*simple*, the simple dispersal model; *trunc*, the truncated dispersal model; *disp-obs*, the dispersal-observation model). *N*, *L*, and $\\phi$ are the design factors used to generate simulated datasets. *N* is the number of marked individuals, *L* the section length (m), and $\\phi$ the recapture probability.
+")
+}
+
+```
+
+
+```{r, echo = FALSE}
+
+Table <- NULL
+for(i in 1:length(theta)){
+  knit_chunk <- paste0("### ",
+                       "\n", TableTEXT[i], "\n", 
+                       "\n ```{r, echo = F}\n\n DL[[",i,"]] \n\n```\n\\pagebreak")
+  Table <- c(Table, knit_chunk)
+}
+
+```
+
+`r paste(knit(text = Table), collapse = '\n')`
+
+<!----figures---->
+
+```{r FigureS1, echo = F, warning = F}
+
+# Read data ----
+  rm(list=ls(all.names=T))
+  source("datasort01_Laplace.R")
+
+  ## axis titles
+  xtitle <- expression("True dispersal parameter"~delta[true]~"(m)")
+  ytitle <- expression("95% CI of estimated dispersal parameter"~delta[est])
+  
+  ## panel label
+  dat$phi.label <- sprintf('phi=="%.1f"', dat$PHI); dat$phi_f <- factor(dat$phi.label, levels = unique(dat$phi.label) )
+  dat$N.label <- sprintf('N=="%i"', dat$N); dat$N_f <- factor(dat$N.label, levels = unique(dat$N.label) )
+  dat$L.label <- sprintf('L=="%i"', dat$LEN); dat$L_f <- factor(dat$L.label, levels = unique(dat$L.label) )
+  
+  ## plot colors
+  COL <- c(rgb(0,0,0), rgb(0,0.3,0.7),rgb(1,0,0))
+  
+# Plot ----
+  ggplot(dat) +
+    geom_hline(aes(yintercept = 0), lwd = 0.01, color = "grey60", alpha = 0.4) +
+    geom_boxplot(aes(y = CI, x = as.factor(THETA), fill = model_code, color = model_code),
+                 alpha = 0.4, lwd = 0.1, outlier.size = 0.8, outlier.stroke = 0) +
+    scale_y_continuous(trans = "log10") +
+    scale_colour_manual(values = COL, name = "Model", labels = c("Simple", "Truncated", "Disp-obs")) +
+    scale_fill_manual(values = COL, name = "Model", labels = c("Simple", "Truncated", "Disp-obs")) +
+    facet_wrap(.~N_f + L_f + phi_f, ncol = 3, dir = "v", scale = "free",
+               labeller = labeller(.cols = label_parsed, .multi_line = F)) +
+    theme(plot.margin= unit(c(1, 1, 2, 2), "lines"),
+          axis.title.x = element_text(vjust = -5),
+          axis.title.y = element_text(vjust = 5),
+          legend.position = "top",
+          legend.direction = "horizontal",
+          strip.background = element_blank(),
+          panel.background = element_blank(),
+          axis.text = element_text(vjust = 1),
+          axis.ticks = element_line(color = "grey50"),
+          axis.line = element_line(color = "grey50")) +
+    labs(x = xtitle, y = ytitle) -> p
+  
+  tag_facet(p) +
+    theme(strip.text = element_text())
+  
+```
+
+**Figure S1** Boxplots of the 95% CIs of estimated dispersal parameter (Laplace). Resutls are shown in relation to true dispersal parameter (x-axis; $\delta_{true}$) and different sampling designs (panels). Boxplots show the median (thick line in the center of the box), the 25% and 75% quantiles (limits of boxes) and ranges within 1.5 times the height of the box (whiskers). Data points outside of whiskers are shown as dots. Values of design factors are shown on the top of each panel ($N$ the number of individuals marked, $L$ the section length, and $\phi$ the recapture probability). Dispersal parameter $\delta$ (the scale parameter of a Laplace distribution) was estimated using three dispersal models (the simple dispersal model, gray box; the truncated dispersal model, blue box; the dispersal observation model, red box).
+
+\pagebreak
+
+
+```{r FigureS2, echo = F, warning = F}
+
+# Read data ----
+  rm(list=ls(all.names=T))
+  source("datasort02_Gaussian.R")
+
+## axis titles
+  xtitle <- expression("True dispersal parameter"~sigma[true]~"(m)")
+  ytitle <- expression("95% CI of estimated dispersal parameter"~sigma[est])
+
+## panel label
+  dat$phi.label <- sprintf('phi=="%.1f"', dat$PHI); dat$phi_f <- factor(dat$phi.label, levels = unique(dat$phi.label) )
+  dat$N.label <- sprintf('N=="%i"', dat$N); dat$N_f <- factor(dat$N.label, levels = unique(dat$N.label) )
+  dat$L.label <- sprintf('L=="%i"', dat$LEN); dat$L_f <- factor(dat$L.label, levels = unique(dat$L.label) )
+
+## plot colors
+  COL <- c(rgb(0,0,0), rgb(0,0.3,0.7),rgb(1,0,0))
+
+# Plot ----
+  ggplot(dat) +
+    geom_hline(aes(yintercept = 0), lwd = 0.01, color = "grey60", alpha = 0.4) +
+    geom_boxplot(aes(y = CI, x = as.factor(THETA), fill = model_code, color = model_code),
+                 alpha = 0.4, lwd = 0.1, outlier.size = 0.8, outlier.stroke = 0) +
+    scale_y_continuous(trans = "log10") +
+    scale_colour_manual(values = COL, name = "Model", labels = c("Simple", "Truncated", "Disp-obs")) +
+    scale_fill_manual(values = COL, name = "Model", labels = c("Simple", "Truncated", "Disp-obs")) +
+    facet_wrap(.~N_f + L_f + phi_f, ncol = 3, dir = "v", scale = "free",
+               labeller = labeller(.cols = label_parsed, .multi_line = F)) +
+    theme(plot.margin= unit(c(1, 1, 2, 2), "lines"),
+          axis.title.x = element_text(vjust = -5),
+          axis.title.y = element_text(vjust = 5),
+          legend.position = "top",
+          legend.direction = "horizontal",
+          strip.background = element_blank(),
+          panel.background = element_blank(),
+          axis.text = element_text(vjust = 1),
+          axis.ticks = element_line(color = "grey50"),
+          axis.line = element_line(color = "grey50")) +
+    labs(x = xtitle, y = ytitle) -> p
+  
+  tag_facet(p) +
+    theme(strip.text = element_text())
+    
+```
+
+**Figure S2** Boxplots of the 95% CIs of estimated dispersal parameter (Gaussian). Resutls are shown in relation to true dispersal parameter (x-axis; $\sigma_{true}$) and different sampling designs (panels). Boxplots show the median (thick line in the center of the box), the 25% and 75% quantiles (limits of boxes), and ranges within 1.5 times the height of the box (whiskers). Data points outside of whiskers are shown as dots. Values of design factors are shown on the top of each panel ($N$ the number of individuals marked, $L$ the section length, and $\phi$ the recapture probability). Dispersal parameter $\sigma$ (the standard deviation of a Gaussian distribution) was estimated using three dispersal models (the simple dispersal model, gray box; the truncated dispersal model, blue box; the dispersal observation model, red box).
+
+\pagebreak
+
+
+```{r FigureS3, echo = F, warning = F}
+# Read data ----
+  rm(list=ls(all.names=T))
+  source("datasort03_Laplace_hetero.R")
+
+## axis titles
+  xtitle <- expression("True dispersal parameter"~delta[true]~"(m)")
+  ytitle <- expression("Proportion of stayers or recaptures")
+
+## panel label
+  dat$phi.label <- sprintf('phi=="%.1f"', dat$PHI); dat$phi_f <- factor(dat$phi.label, levels = unique(dat$phi.label) )
+  dat$N.label <- sprintf('N=="%i"', dat$N); dat$N_f <- factor(dat$N.label, levels = unique(dat$N.label) )
+  dat$L.label <- sprintf('L=="%i"', dat$LEN); dat$L_f <- factor(dat$L.label, levels = unique(dat$L.label) )
+  dat %>%
+    pivot_longer(cols = c(Pstay, Pcap), names_to = "Ptype", values_to = "P") -> dat_long
+  
+## plot colors
+  COL <- c(rgb(0,0,0), rgb(1,0,0))
+
+# Plot ----
+  ggplot(dat_long) +
+    geom_boxplot(aes(y = P, x = as.factor(THETA), fill = Ptype, color = Ptype),
+                 alpha = 0.4, lwd = 0.1, outlier.size = 0.8, outlier.stroke = 0) +
+    scale_colour_manual(values = COL, name = "", labels = c("Recapture", "Stayer")) +
+    scale_fill_manual(values = COL, name = "", labels = c("Recapture", "Stayer")) +
+    facet_wrap(.~N_f + L_f + phi_f, ncol = 3, dir = "v", scale = "free",
+               labeller = labeller(.cols = label_parsed, .multi_line = F)) +
+    theme(plot.margin= unit(c(1, 1, 2, 2), "lines"),
+          axis.title.x = element_text(vjust = -5),
+          axis.title.y = element_text(vjust = 5),
+          legend.position = "top",
+          legend.direction = "horizontal",
+          strip.background = element_blank(),
+          panel.background = element_blank(),
+          axis.text = element_text(vjust = 1),
+          axis.ticks = element_line(color = "grey50"),
+          axis.line = element_line(color = "grey50")) +
+    labs(x = xtitle, y = ytitle) -> p
+  
+  tag_facet(p, x = 5) +
+    theme(strip.text = element_text())
+
+```
+
+**Figure S3** Boxplots showing the propotion of stayers (red) or recaptures (gray) in relation to true dispersal parameter (Laplace) with individual-level heterogeneity in true recapture probability $\phi_i$ ($\rm{logit}~\phi_i \sim Normal(\rm{logit}~\phi, 1)$). Different panels show different sampling designs. Values of design factors are shown on the top of each panel ($N$ the number of individuals marked, $L$ the section length, and $\phi$ the recapture probability).
+
+\pagebreak
+
+
+```{r FigureS4, echo = F, warning = F}
+# Read data ----
+  rm(list=ls(all.names=T))
+  source("datasort04_Gaussian_hetero.R")
+
+## axis titles
+  xtitle <- expression("True dispersal parameter"~sigma[true]~"(m)")
+  ytitle <- expression("Proportion of stayers or recaptures")
+
+## panel label
+  dat$phi.label <- sprintf('phi=="%.1f"', dat$PHI); dat$phi_f <- factor(dat$phi.label, levels = unique(dat$phi.label) )
+  dat$N.label <- sprintf('N=="%i"', dat$N); dat$N_f <- factor(dat$N.label, levels = unique(dat$N.label) )
+  dat$L.label <- sprintf('L=="%i"', dat$LEN); dat$L_f <- factor(dat$L.label, levels = unique(dat$L.label) )
+  dat %>%
+    pivot_longer(cols = c(Pstay, Pcap), names_to = "Ptype", values_to = "P") -> dat_long
+  
+## plot colors
+  COL <- c(rgb(0,0,0), rgb(1,0,0))
+
+# Plot ----
+  ggplot(dat_long) +
+    geom_boxplot(aes(y = P, x = as.factor(THETA), fill = Ptype, color = Ptype),
+                 alpha = 0.4, lwd = 0.1, outlier.size = 0.8, outlier.stroke = 0) +
+    scale_colour_manual(values = COL, name = "", labels = c("Recapture", "Stayer")) +
+    scale_fill_manual(values = COL, name = "", labels = c("Recapture", "Stayer")) +
+    facet_wrap(.~N_f + L_f + phi_f, ncol = 3, dir = "v", scale = "free",
+               labeller = labeller(.cols = label_parsed, .multi_line = F)) +
+    theme(plot.margin= unit(c(1, 1, 2, 2), "lines"),
+          axis.title.x = element_text(vjust = -5),
+          axis.title.y = element_text(vjust = 5),
+          legend.position = "top",
+          legend.direction = "horizontal",
+          strip.background = element_blank(),
+          panel.background = element_blank(),
+          axis.text = element_text(vjust = 1),
+          axis.ticks = element_line(color = "grey50"),
+          axis.line = element_line(color = "grey50")) +
+    labs(x = xtitle, y = ytitle) -> p
+  
+  tag_facet(p, x = 5) +
+    theme(strip.text = element_text())
+
+```
+
+**Figure S4** Boxplots showing the propotion of stayers (red) or recaptures (gray) in relation to true dispersal parameter (Gaussian) with individual-level heterogeneity in true recapture probability $\phi_i$ ($\rm{logit}~\phi_i \sim Normal(\rm{logit}~\phi, 1)$). Different panels show different sampling designs. Values of design factors are shown on the top of each panel ($N$ the number of individuals marked, $L$ the section length, and $\phi$ the recapture probability).
+
+\pagebreak
+
+
+```{r FigureS5, echo = F, warning = F}
+# Read data ----
+  rm(list=ls(all.names=T))
+  source("datasort03_Laplace_hetero.R")
+  
+  ## axis titles
+  xtitle <- expression("True dispersal parameter"~delta[true]~"(m)")
+  ytitle <- expression("% bias")
+  
+  ## panel label
+  dat$phi.label <- sprintf('phi=="%.1f"', dat$PHI); dat$phi_f <- factor(dat$phi.label, levels = unique(dat$phi.label) )
+  dat$N.label <- sprintf('N=="%i"', dat$N); dat$N_f <- factor(dat$N.label, levels = unique(dat$N.label) )
+  dat$L.label <- sprintf('L=="%i"', dat$LEN); dat$L_f <- factor(dat$L.label, levels = unique(dat$L.label) )
+
+  ## plot colors
+  COL <- c(rgb(0,0,0), rgb(0,0.3,0.7),rgb(1,0,0))
+  
+# Plot ----
+  ggplot(dat) +
+    geom_hline(aes(yintercept = 0), lwd = 0.5, color = "grey60", alpha = 0.4) +
+    geom_boxplot(aes(y = bias, x = as.factor(THETA), fill = model_code, color = model_code),
+                 alpha = 0.4, lwd = 0.1, outlier.size = 0.8, outlier.stroke = 0) +
+    scale_colour_manual(values = COL, name = "Model", labels = c("Simple", "Truncated", "Disp-obs")) +
+    scale_fill_manual(values = COL, name = "Model", labels = c("Simple", "Truncated", "Disp-obs")) +
+    facet_wrap(.~N_f + L_f + phi_f, ncol = 3, dir = "v", scale = "free",
+               labeller = labeller(.cols = label_parsed, .multi_line = F)) +
+    theme(plot.margin= unit(c(1, 1, 2, 2), "lines"),
+          axis.title.x = element_text(vjust = -5),
+          axis.title.y = element_text(vjust = 5),
+          legend.position = "top",
+          legend.direction = "horizontal",
+          strip.background = element_blank(),
+          panel.background = element_blank(),
+          axis.text = element_text(vjust = 1),
+          axis.ticks = element_line(color = "grey50"),
+          axis.line = element_line(color = "grey50")) +
+    labs(x = xtitle, y = ytitle) -> p
+  
+  tag_facet(p) +
+    theme(strip.text = element_text())
+
+```
+
+**Figure S5** Boxplots of % bias in the estimated dispersal parameter (Laplace) with individual-level heterogeneity in true recapture probability $\phi_i$ ($\rm{logit}~\phi_i \sim Normal(\rm{logit}~\phi, 1)$). Resutls are shown in relation to true dispersal parameter (x-axis; $\delta_{true}$) and different sampling designs (panels). Boxplots show the median (thick line in the center of the box), the 25% and 75% quantiles (limits of boxes), and ranges within 1.5 times the height of the box (whiskers). Data points outside of whiskers are shown as dots. Values of design factors are shown on the top of each panel ($N$ the number of individuals marked, $L$ the section length, and $\phi$ the recapture probability). Dispersal parameter $\delta$ (the scale parameter of a Laplace distribution) was estimated using three dispersal models (the simple dispersal model, gray box; the truncated dispersal model, blue box; the dispersal observation model, red box).
+
+\pagebreak
+
+
+```{r FigureS6, echo = F, warning = F}
+
+# Read data ----
+  rm(list=ls(all.names=T))
+  source("datasort04_Gaussian_hetero.R")
+  
+  ## axis titles
+  xtitle <- expression("True dispersal parameter"~sigma[true]~"(m)")
+  ytitle <- expression("% bias")
+  
+  ## panel label
+  dat$phi.label <- sprintf('phi=="%.1f"', dat$PHI); dat$phi_f <- factor(dat$phi.label, levels = unique(dat$phi.label) )
+  dat$N.label <- sprintf('N=="%i"', dat$N); dat$N_f <- factor(dat$N.label, levels = unique(dat$N.label) )
+  dat$L.label <- sprintf('L=="%i"', dat$LEN); dat$L_f <- factor(dat$L.label, levels = unique(dat$L.label) )
+  
+  ## plot colors
+  COL <- c(rgb(0,0,0), rgb(0,0.3,0.7),rgb(1,0,0))
+  
+# Plot ----
+  ggplot(dat) +
+    geom_hline(aes(yintercept = 0), lwd = 0.5, color = "grey60", alpha = 0.4) +
+    geom_boxplot(aes(y = bias, x = as.factor(THETA), fill = model_code, color = model_code),
+                 alpha = 0.4, lwd = 0.1, outlier.size = 0.8, outlier.stroke = 0) +
+    scale_colour_manual(values = COL, name = "Model", labels = c("Simple", "Truncated", "Disp-obs")) +
+    scale_fill_manual(values = COL, name = "Model", labels = c("Simple", "Truncated", "Disp-obs")) +
+    facet_wrap(.~N_f + L_f + phi_f, ncol = 3, dir = "v", scale = "free",
+               labeller = labeller(.cols = label_parsed, .multi_line = F)) +
+    theme(plot.margin= unit(c(1, 1, 2, 2), "lines"),
+          axis.title.x = element_text(vjust = -5),
+          axis.title.y = element_text(vjust = 5),
+          legend.position = "top",
+          legend.direction = "horizontal",
+          strip.background = element_blank(),
+          panel.background = element_blank(),
+          axis.text = element_text(vjust = 1),
+          axis.ticks = element_line(color = "grey50"),
+          axis.line = element_line(color = "grey50")) +
+    labs(x = xtitle, y = ytitle) -> p
+
+  tag_facet(p) +
+    theme(strip.text = element_text())
+  
+```
+
+**Figure S6** Boxplots of % bias in the estimated dispersal parameter (Gaussian) with individual-level heterogeneity in true recapture probability $\phi_i$ ($\rm{logit}~\phi_i \sim Normal(\rm{logit}~\phi, 1)$). Resutls are shown in relation to true dispersal parameter (x-axis; $\sigma_{true}$) and different sampling designs (panels). Boxplots show the median (thick line in the center of the box), the 25% and 75% quantiles (limits of boxes), and ranges within 1.5 times the height of the box (whiskers). Data points outside of whiskers are shown as dots. Values of design factors are shown on the top of each panel ($N$ the number of individuals marked, $L$ the section length, and $\phi$ the recapture probability). Dispersal parameter $\sigma$ (the standard deviation of a Gaussian distribution) was estimated using three dispersal models (the simple dispersal model, gray box; the truncated dispersal model, blue box; the dispersal observation model, red box).
+
+\pagebreak
+
+
+```{r Figure S7, echo = F, warning = F}
+
+# Read data ----
+  rm(list=ls(all.names=T))
+  source("datasort03_Laplace_hetero.R")
+
+  ## axis titles
+  xtitle <- expression("True dispersal parameter"~delta[true]~"(m)")
+  ytitle <- expression("95% CI of estimated dispersal parameter"~delta[est])
+  
+  ## panel label
+  dat$phi.label <- sprintf('phi=="%.1f"', dat$PHI); dat$phi_f <- factor(dat$phi.label, levels = unique(dat$phi.label) )
+  dat$N.label <- sprintf('N=="%i"', dat$N); dat$N_f <- factor(dat$N.label, levels = unique(dat$N.label) )
+  dat$L.label <- sprintf('L=="%i"', dat$LEN); dat$L_f <- factor(dat$L.label, levels = unique(dat$L.label) )
+  
+  ## plot colors
+  COL <- c(rgb(0,0,0), rgb(0,0.3,0.7),rgb(1,0,0))
+  
+# Plot ----
+  ggplot(dat) +
+    geom_boxplot(aes(y = CI, x = as.factor(THETA), fill = model_code, color = model_code),
+                 alpha = 0.4, lwd = 0.1, outlier.size = 0.8, outlier.stroke = 0) +
+    scale_y_continuous(trans = "log10") +
+    scale_colour_manual(values = COL, name = "Model", labels = c("Simple", "Truncated", "Disp-obs")) +
+    scale_fill_manual(values = COL, name = "Model", labels = c("Simple", "Truncated", "Disp-obs")) +
+    facet_wrap(.~N_f + L_f + phi_f, ncol = 3, dir = "v", scale = "free",
+               labeller = labeller(.cols = label_parsed, .multi_line = F)) +
+    theme(plot.margin= unit(c(1, 1, 2, 2), "lines"),
+          axis.title.x = element_text(vjust = -5),
+          axis.title.y = element_text(vjust = 5),
+          legend.position = "top",
+          legend.direction = "horizontal",
+          strip.background = element_blank(),
+          panel.background = element_blank(),
+          axis.text = element_text(vjust = 1),
+          axis.ticks = element_line(color = "grey50"),
+          axis.line = element_line(color = "grey50")) +
+    labs(x = xtitle, y = ytitle) -> p
+  
+  tag_facet(p) +
+    theme(strip.text = element_text())
+  
+```
+
+**Figure S7** Boxplots of the 95% CIs of estimated dispersal parameter (Laplace) with individual-level heterogeneity in true recapture probability $\phi_i$ ($\rm{logit}~\phi_i \sim Normal(\rm{logit}~\phi, 1)$). Results are shown in relation to true dispersal parameter (x-axis; $\delta_{true}$) and different sampling designs (panels). Boxplots show the median (thick line in the center of the box), the 25% and 75% quantiles (limits of boxes), and ranges within 1.5 times the height of the box (whiskers). Data points outside of whiskers are shown as dots. Values of design factors are shown on the top of each panel ($N$ the number of individuals marked, $L$ the section length, and $\phi$ the recapture probability). Dispersal parameter $\delta$ (the scale parameter of a Laplace distribution) was estimated using three dispersal models (the simple dispersal model, gray box; the truncated dispersal model, blue box; the dispersal observation model, red box).
+
+\pagebreak
+
+
+```{r Figure S8, echo = F, warning = F}
+
+# Read data ----
+  rm(list=ls(all.names=T))
+  source("datasort04_Gaussian_hetero.R")
+
+## axis titles
+  xtitle <- expression("True dispersal parameter"~sigma[true]~"(m)")
+  ytitle <- expression("95% CI of estimated dispersal parameter"~sigma[est])
+
+## panel label
+  dat$phi.label <- sprintf('phi=="%.1f"', dat$PHI); dat$phi_f <- factor(dat$phi.label, levels = unique(dat$phi.label) )
+  dat$N.label <- sprintf('N=="%i"', dat$N); dat$N_f <- factor(dat$N.label, levels = unique(dat$N.label) )
+  dat$L.label <- sprintf('L=="%i"', dat$LEN); dat$L_f <- factor(dat$L.label, levels = unique(dat$L.label) )
+
+## plot colors
+  COL <- c(rgb(0,0,0), rgb(0,0.3,0.7),rgb(1,0,0))
+
+# Plot ----
+  ggplot(dat) +
+    geom_boxplot(aes(y = CI, x = as.factor(THETA), fill = model_code, color = model_code),
+                 alpha = 0.4, lwd = 0.1, outlier.size = 0.8, outlier.stroke = 0) +
+    scale_y_continuous(trans = "log10") +
+    scale_colour_manual(values = COL, name = "Model", labels = c("Simple", "Truncated", "Disp-obs")) +
+    scale_fill_manual(values = COL, name = "Model", labels = c("Simple", "Truncated", "Disp-obs")) +
+    facet_wrap(.~N_f + L_f + phi_f, ncol = 3, dir = "v", scale = "free",
+               labeller = labeller(.cols = label_parsed, .multi_line = F)) +
+    theme(plot.margin= unit(c(1, 1, 2, 2), "lines"),
+          axis.title.x = element_text(vjust = -5),
+          axis.title.y = element_text(vjust = 5),
+          legend.position = "top",
+          legend.direction = "horizontal",
+          strip.background = element_blank(),
+          panel.background = element_blank(),
+          axis.text = element_text(vjust = 1),
+          axis.ticks = element_line(color = "grey50"),
+          axis.line = element_line(color = "grey50")) +
+    labs(x = xtitle, y = ytitle) -> p
+  
+  tag_facet(p) +
+    theme(strip.text = element_text())
+
+```
+
+**Figure S8** Boxplots of the 95% CIs of estimated dispersal parameter (Gaussian) with individual-level heterogeneity in true recapture probability $\phi_i$ ($\rm{logit}~\phi_i \sim Normal(\rm{logit}~\phi, 1)$). Results are shown in relation to true dispersal parameter (x-axis; $\sigma_{true}$) and different sampling designs (panels). Boxplots show the median (thick line in the center of the box), the 25% and 75% quantiles (limits of boxes), and ranges within 1.5 times the height of the box (whiskers). Data points outside of whiskers are shown as dots. Values of design factors are shown on the top of each panel ($N$ the number of individuals marked, $L$ the section length, and $\phi$ the recapture probability). Dispersal parameter $\sigma$ (the standard deviation of a Gaussian distribution) was estimated using three dispersal models (the simple dispersal model, gray box; the truncated dispersal model, blue box; the dispersal observation model, red box).

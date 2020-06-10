@@ -1,0 +1,7 @@
+,Kernel,m1_Bias,m2_Bias,m3_Bias,FUN
+1,Laplace,-29,16.4,5.7,mean
+2,Laplace,-58.8,-1.5,-8.7,min
+3,Laplace,-4.6,232.7,58.3,max
+4,Normal,-15.4,17.9,5.3,mean
+5,Normal,-42.5,-1.5,-2.9,min
+6,Normal,-1.4,212.1,74.3,max
