@@ -4,7 +4,7 @@
 
 # Read data ----
   rm(list=ls(all.names=T))
-  source("datasort01_Laplace.R")
+  source("datasort01_laplace.R")
   
   ## axis titles
   xtitle <- expression("True dispersal parameter"~delta[true]~"(m)")

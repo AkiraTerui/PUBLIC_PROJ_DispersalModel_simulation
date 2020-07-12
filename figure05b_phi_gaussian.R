@@ -4,7 +4,7 @@
 
 # Read data ----
   rm(list=ls(all.names=T))
-  source("datasort02_Gaussian.R")
+  source("datasort02_gaussian.R")
 
 ## axis titles
   xtitle <- expression("True dispersal parameter"~sigma[true]~"(m)")
