@@ -1,4 +1,4 @@
-
+-
 # Read data ----
   #rm(list = ls(all.names = T))
   d1 <- read.csv("result/sim_model_simple_hetero_Laplace2020-05-17.csv")
