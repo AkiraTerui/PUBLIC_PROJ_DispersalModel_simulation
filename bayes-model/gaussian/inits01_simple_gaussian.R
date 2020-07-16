@@ -53,7 +53,7 @@
       inits <- replicate(3, list(tau = 1/(sigma^2), .RNG.name = "base::Mersenne-Twister", .RNG.seed = NA ), simplify = F )
       for(k in 1:3) inits[[k]]$.RNG.seed <- k
       
-      m <- read.jagsfile("BayesModel/Gaussian/model_simple_gaussian_v1.R")
+      m <- read.jagsfile("bayes-model/gaussian/model_simple_gaussian_v1.R")
       
       post <- run.jags(m$model, monitor = para, data = Djags,
                        n.chains = 3, inits = inits, method = "parallel",
