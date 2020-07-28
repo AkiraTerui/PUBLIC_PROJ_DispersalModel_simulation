@@ -7,50 +7,50 @@ Author: Akira Terui
 
 #### Data management
 
--`datasort01_laplace.R`: merging the results of Laplace models  
--`datasort02_gaussian.R`: merging the results of Gaussian models  
--`datasort03_laplace_hetero.R`: merging the results of Laplace models (recapture probability varies among individuals)  
--`datasort04_gaussian_hetero.R`: merging the results of Gaussian models (recapture probability varies among individuals)  
--`datasort05_basic-stats.R`: Basic statistics (the range of the proportion of stayers/recaptures)  
+* `datasort01_laplace.R`: merging the results of Laplace models  
+* `datasort02_gaussian.R`: merging the results of Gaussian models  
+* `datasort03_laplace_hetero.R`: merging the results of Laplace models (recapture probability varies among individuals)  
+* `datasort04_gaussian_hetero.R`: merging the results of Gaussian models (recapture probability varies among individuals)  
+* `datasort05_basic-stats.R`: Basic statistics (the range of the proportion of stayers/recaptures)  
 
 #### Figures
 
--`figure01_kernel.R`: script for figure 1  
--`figure02a_pstay_laplace.R`: script for figure 2  
--`figure02b_pstay_gaussian.R`: script for figure 3  
--`figure03a_delta.R`: script for figure 4  
--`figure03b_sigma.R`: script for figure 5  
--`figure04a_phi_laplace.R`: script for figure 6  
--`figure04b_phi_gaussian.R`: script for figure 7  
--`function_simdata_ver5.R`: function for simulated data  
--`ecores_support-info.Rmd`: Rmarkdown for Supporting Information  
+* `figure01_kernel.R`: script for figure 1  
+* `figure02a_pstay_laplace.R`: script for figure 2  
+* `figure02b_pstay_gaussian.R`: script for figure 3  
+* `figure03a_delta.R`: script for figure 4  
+* `figure03b_sigma.R`: script for figure 5  
+* `figure04a_phi_laplace.R`: script for figure 6  
+* `figure04b_phi_gaussian.R`: script for figure 7  
+* `function_simdata_ver5.R`: function for simulated data  
+* `ecores_support-info.Rmd`: Rmarkdown for Supporting Information  
 
 #### Data
 
--`/result`: simulation results  
+* `/result`: simulation results  
 
 #### Bayesian modeling (/bayes-model)
 
 ##### Laplace (/Laplace)
 
--`inits01_simple_laplace.R`: script to run a simple dispersal model  
--`inits02_truncated_laplace.R`: script to run a truncated dispersal model   
--`inits03_disp_obs_laplace.R`: script to run a dispersal observation model  
--`inits04_hetero_simple_laplace.R`: script to run a simple dispersal model (simulated with variation in recapture probability)  
--`inits05_hetero_truncated_laplace.R`: script to run a truncated dispersal model (simulated with variation in recapture probability)  
--`inits06_hetero_disp_obs_laplace.R`: script to run a dispersal observation model (simulated with variation in recapture probability)  
--`model_simple_laplace_v1.R`: JAGS script for a simple dispersal model  
--`model_truncated_laplace_v1.R`: JAGS script for a truncated dispersal model  
--`model_disp_obs_laplace_v1.R`: JAGS script for a dispersal-observation model  
+* `inits01_simple_laplace.R`: script to run a simple dispersal model  
+* `inits02_truncated_laplace.R`: script to run a truncated dispersal model   
+* `inits03_disp_obs_laplace.R`: script to run a dispersal observation model  
+* `inits04_hetero_simple_laplace.R`: script to run a simple dispersal model (simulated with variation in recapture probability)  
+* `inits05_hetero_truncated_laplace.R`: script to run a truncated dispersal model (simulated with variation in recapture probability)  
+* `inits06_hetero_disp_obs_laplace.R`: script to run a dispersal observation model (simulated with variation in recapture probability)  
+* `model_simple_laplace_v1.R`: JAGS script for a simple dispersal model  
+* `model_truncated_laplace_v1.R`: JAGS script for a truncated dispersal model  
+* `model_disp_obs_laplace_v1.R`: JAGS script for a dispersal-observation model  
 
 ##### Gaussian (/Gaussian)
 
--`inits01_simple_gaussian.R`: script to run a simple dispersal model  
--`inits02_truncated_gaussian.R`: script to run a truncated dispersal model   
--`inits03_disp_obs_gaussian.R`: script to run a dispersal observation model  
--`inits04_hetero_simple_gaussian.R`: script to run a simple dispersal model (simulated with variation in recapture probability)  
--`inits05_hetero_truncated_gaussian.R`: script to run a truncated dispersal model (simulated with variation in recapture probability)  
--`inits06_hetero_disp_obs_gaussian.R`: script to run a dispersal observation model (simulated with variation in recapture probability)  
--`model_simple_gaussian_v1.R`: JAGS script for a simple dispersal model  
--`model_truncated_gaussian_v1.R`: JAGS script for a truncated dispersal model  
--`model_disp_obs_gaussian_v1.R`: JAGS script for a dispersal-observation model  
+* `inits01_simple_gaussian.R`: script to run a simple dispersal model  
+* `inits02_truncated_gaussian.R`: script to run a truncated dispersal model   
+* `inits03_disp_obs_gaussian.R`: script to run a dispersal observation model  
+* `inits04_hetero_simple_gaussian.R`: script to run a simple dispersal model (simulated with variation in recapture probability)  
+* `inits05_hetero_truncated_gaussian.R`: script to run a truncated dispersal model (simulated with variation in recapture probability)  
+* `inits06_hetero_disp_obs_gaussian.R`: script to run a dispersal observation model (simulated with variation in recapture probability)  
+* `model_simple_gaussian_v1.R`: JAGS script for a simple dispersal model  
+* `model_truncated_gaussian_v1.R`: JAGS script for a truncated dispersal model  
+* `model_disp_obs_gaussian_v1.R`: JAGS script for a dispersal-observation model  
