@@ -51,65 +51,8 @@ editor_options:
 
 ```{r TableDATA, include = F}
 
-# Read data ----
-  source("datasort01_Laplace.R")
-  dat_Laplace <- dat
-  source("datasort02_Gaussian.R")
-  dat_Gaussian <- dat
-  
-  ## Create columns Bias and CItrue
-  dat_Laplace <- dat_Laplace %>%
-                    mutate(Bias = delta_med - DELTA) %>%
-                    mutate(theta = DELTA) %>%
-                    mutate(CItrue = ifelse(DELTA <= delta_upper & DELTA >= delta_lower, 1, 0))
-                    
-  dat_Gaussian <- dat_Gaussian %>%
-                    mutate(Bias = sigma_med - SIGMA) %>%
-                    mutate(theta = SIGMA) %>%
-                    mutate(CItrue = ifelse(SIGMA <= sigma_upper & SIGMA >= sigma_lower, 1, 0))
+source("datasort06_table-si.R")
 
-# Table ----
-  ## define function
-  fun_table <- function(data, parameter = c("N", "LEN", "DELTA", "SIGMA", "PHI")){
-    paraID <- which(colnames(data) %in% parameter)
-    para <- sapply(paraID, function(i)unique(data[,i]) )
-    para.set <<- expand.grid(N = para[[1]],
-                            LEN = para[[2]],
-                            THETA = para[[3]],
-                            PHI = para[[4]])
-    
-    for(i in 1:nrow(para.set)){
-      Ind <- sapply(1:length(paraID), function(x) data[,paraID[x]]==para.set[i,x])
-      dat.sub <<- data[rowSums(Ind) == length(paraID),]
-      uvalue <<- sapply(dat.sub[,paraID], unique)
-      if(any(uvalue != para.set[i,1:length(paraID)]) ) { print(dat.sub); stop("error") }
-      if(length(unique(dat.sub$theta)) != 1) { print(dat.sub); stop("error") }
-      para.set[i,c("m1_Bias", "m2_Bias", "m3_Bias")] <- tapply(dat.sub$Bias, dat.sub$model_code,
-                                                               function(x) round(100*mean(x)/unique(dat.sub$theta), 1) )
-      para.set[i,c("m1_CIp", "m2_CIp", "m3_CIp")] <- tapply(dat.sub$CItrue, dat.sub$model_code, mean)
-    }
-    
-    return(para.set)
-  }
-
-  ## Split dataframes
-  reL <- fun_table(dat_Laplace); reL$Kernel <- "Laplace"
-  reG <- fun_table(dat_Gaussian); reG$Kernel <- "Gaussian"
-  re <- merge(reL, reG, all = T)
-  
-  theta <- seq(50, 300, by = 50)
-  DL <- list(NULL)
-  for(i in 1:length(theta)){
-    DL[[i]] <- re %>%
-      dplyr::filter(THETA == theta[i]) %>%
-      dplyr::select(Kernel, N, LEN, PHI, m1_Bias, m2_Bias, m3_Bias) %>%
-      dplyr::arrange(Kernel) %>%
-      kable(col.names = c("Kernel", "$N$", "$L$", "$\\phi$",
-                          "$Bias_{simple} (\\%)$", "$Bias_{trunc} (\\%)$", "$Bias_{disp-obs} (\\%)$"),
-            format = "markdown")
-    names(DL)[i] <- paste0("Table S", i)
-  }
-  
 ```
 
 
@@ -119,7 +62,7 @@ theta <- seq(50, 300, by = 50)
 
 TableTEXT <- NULL
 for(i in 1:length(theta)){
-TableTEXT[i] <- paste0("**`r names(DL)[",i,"]`** ", "Bias of dispersal parameter estimated from simulated datasets with the true dispersal parameter $\\theta_{true} =`r theta[",i,"]`$ ($\\theta_{true}$ is either $\\delta_{true}$ [Laplace] or $\\sigma_{true}$ [Gaussian]).The percent bias of estimated dispersal parameter was calculated as $Bias(\\%) = 100~E(\\theta_{est} - \\theta_{true})/\\theta_{true}$, where  $E(\\theta_{est} - \\theta_{true})$ is the average of 50 estimates for a given simulation scenario (each row corresponds to a simulation scenario). Subscripts denote different dispersal models (*simple*, the simple dispersal model; *trunc*, the truncated dispersal model; *disp-obs*, the dispersal-observation model). *N*, *L*, and $\\phi$ are the design factors used to generate simulated datasets. *N* is the number of marked individuals, *L* the section length (m), and $\\phi$ the recapture probability.
+TableTEXT[i] <- paste0("**`r names(DL)[",i,"]`** ", "Bias of dispersal parameter estimated from simulated datasets with the true dispersal parameter $\\theta_{true} =`r theta[",i,"]`$ ($\\theta_{true}$ is either $\\delta_{true}$ [Laplace] or $\\sigma_{true}$ [Gaussian]).The percent bias of estimated dispersal parameter was calculated as $\\%~bias = 100~E(\\theta_{est} - \\theta_{true})/\\theta_{true}$, where  $E(\\theta_{est} - \\theta_{true})$ is the average of 50 estimates for a given simulation scenario (each row corresponds to a simulation scenario). Subscripts denote different dispersal models (*simple*, the simple dispersal model; *trunc*, the truncated dispersal model; *disp-obs*, the dispersal-observation model). *N*, *L*, and $\\phi$ are the design factors used to generate simulated datasets. *N* is the number of marked individuals, *L* the section length (m), and $\\phi$ the recapture probability.
 ")
 }
 
@@ -187,7 +130,7 @@ for(i in 1:length(theta)){
   
 ```
 
-**Figure S1** Boxplots of the 95% CIs of estimated dispersal parameter (Laplace). Resutls are shown in relation to true dispersal parameter (x-axis; $\delta_{true}$) and different sampling designs (panels). Boxplots show the median (thick line in the center of the box), the 25% and 75% quantiles (limits of boxes) and ranges within 1.5 times the height of the box (whiskers). Data points outside of whiskers are shown as dots. Values of design factors are shown on the top of each panel ($N$ the number of individuals marked, $L$ the section length, and $\phi$ the recapture probability). Dispersal parameter $\delta$ (the scale parameter of a Laplace distribution) was estimated using three dispersal models (the simple dispersal model, gray box; the truncated dispersal model, blue box; the dispersal observation model, red box).
+**Figure S1** Boxplots of the 95% CIs of estimated dispersal parameter (Laplace). Resutls are shown in relation to true dispersal parameter (x-axis; $\delta_{true}$) and different sampling designs (panels). Boxplots show the median (thick line in the center of the box), the 25% and 75% quantiles (limits of boxes) and ranges within 1.5 times the height of the box (whiskers). Data points outside of whiskers are shown as dots. Values of design factors are shown on the top of each panel ($N$ the number of individuals marked, $L$ the section length, and $\phi$ the recapture probability). Dispersal parameter $\delta_{true}$ (the scale parameter of a Laplace distribution) was estimated using three dispersal models (the simple dispersal model, gray box; the truncated dispersal model, blue box; the dispersal observation model, red box).
 
 \pagebreak
 
@@ -237,7 +180,7 @@ for(i in 1:length(theta)){
     
 ```
 
-**Figure S2** Boxplots of the 95% CIs of estimated dispersal parameter (Gaussian). Resutls are shown in relation to true dispersal parameter (x-axis; $\sigma_{true}$) and different sampling designs (panels). Boxplots show the median (thick line in the center of the box), the 25% and 75% quantiles (limits of boxes), and ranges within 1.5 times the height of the box (whiskers). Data points outside of whiskers are shown as dots. Values of design factors are shown on the top of each panel ($N$ the number of individuals marked, $L$ the section length, and $\phi$ the recapture probability). Dispersal parameter $\sigma$ (the standard deviation of a Gaussian distribution) was estimated using three dispersal models (the simple dispersal model, gray box; the truncated dispersal model, blue box; the dispersal observation model, red box).
+**Figure S2** Boxplots of the 95% CIs of estimated dispersal parameter (Gaussian). Resutls are shown in relation to true dispersal parameter (x-axis; $\sigma_{true}$) and different sampling designs (panels). Boxplots show the median (thick line in the center of the box), the 25% and 75% quantiles (limits of boxes), and ranges within 1.5 times the height of the box (whiskers). Data points outside of whiskers are shown as dots. Values of design factors are shown on the top of each panel ($N$ the number of individuals marked, $L$ the section length, and $\phi$ the recapture probability). Dispersal parameter $\sigma_{true}$ (the standard deviation of a Gaussian distribution) was estimated using three dispersal models (the simple dispersal model, gray box; the truncated dispersal model, blue box; the dispersal observation model, red box).
 
 \pagebreak
 
@@ -383,7 +326,7 @@ for(i in 1:length(theta)){
 
 ```
 
-**Figure S5** Boxplots of % bias in the estimated dispersal parameter (Laplace) with individual-level heterogeneity in true recapture probability $\phi_i$ ($\rm{logit}~\phi_i \sim Normal(\rm{logit}~\phi, 1)$). Resutls are shown in relation to true dispersal parameter (x-axis; $\delta_{true}$) and different sampling designs (panels). Boxplots show the median (thick line in the center of the box), the 25% and 75% quantiles (limits of boxes), and ranges within 1.5 times the height of the box (whiskers). Data points outside of whiskers are shown as dots. Values of design factors are shown on the top of each panel ($N$ the number of individuals marked, $L$ the section length, and $\phi$ the recapture probability). Dispersal parameter $\delta$ (the scale parameter of a Laplace distribution) was estimated using three dispersal models (the simple dispersal model, gray box; the truncated dispersal model, blue box; the dispersal observation model, red box).
+**Figure S5** Boxplots of % bias in the estimated dispersal parameter (Laplace) with individual-level heterogeneity in true recapture probability $\phi_i$ ($\rm{logit}~\phi_i \sim Normal(\rm{logit}~\phi, 1)$). Resutls are shown in relation to true dispersal parameter (x-axis; $\delta_{true}$) and different sampling designs (panels). Boxplots show the median (thick line in the center of the box), the 25% and 75% quantiles (limits of boxes), and ranges within 1.5 times the height of the box (whiskers). Data points outside of whiskers are shown as dots. Values of design factors are shown on the top of each panel ($N$ the number of individuals marked, $L$ the section length, and $\phi$ the recapture probability). Dispersal parameter $\delta_{true}$ (the scale parameter of a Laplace distribution) was estimated using three dispersal models (the simple dispersal model, gray box; the truncated dispersal model, blue box; the dispersal observation model, red box).
 
 \pagebreak
 
@@ -432,7 +375,7 @@ for(i in 1:length(theta)){
   
 ```
 
-**Figure S6** Boxplots of % bias in the estimated dispersal parameter (Gaussian) with individual-level heterogeneity in true recapture probability $\phi_i$ ($\rm{logit}~\phi_i \sim Normal(\rm{logit}~\phi, 1)$). Resutls are shown in relation to true dispersal parameter (x-axis; $\sigma_{true}$) and different sampling designs (panels). Boxplots show the median (thick line in the center of the box), the 25% and 75% quantiles (limits of boxes), and ranges within 1.5 times the height of the box (whiskers). Data points outside of whiskers are shown as dots. Values of design factors are shown on the top of each panel ($N$ the number of individuals marked, $L$ the section length, and $\phi$ the recapture probability). Dispersal parameter $\sigma$ (the standard deviation of a Gaussian distribution) was estimated using three dispersal models (the simple dispersal model, gray box; the truncated dispersal model, blue box; the dispersal observation model, red box).
+**Figure S6** Boxplots of % bias in the estimated dispersal parameter (Gaussian) with individual-level heterogeneity in true recapture probability $\phi_i$ ($\rm{logit}~\phi_i \sim Normal(\rm{logit}~\phi, 1)$). Resutls are shown in relation to true dispersal parameter (x-axis; $\sigma_{true}$) and different sampling designs (panels). Boxplots show the median (thick line in the center of the box), the 25% and 75% quantiles (limits of boxes), and ranges within 1.5 times the height of the box (whiskers). Data points outside of whiskers are shown as dots. Values of design factors are shown on the top of each panel ($N$ the number of individuals marked, $L$ the section length, and $\phi$ the recapture probability). Dispersal parameter $\sigma_{true}$ (the standard deviation of a Gaussian distribution) was estimated using three dispersal models (the simple dispersal model, gray box; the truncated dispersal model, blue box; the dispersal observation model, red box).
 
 \pagebreak
 
@@ -481,7 +424,7 @@ for(i in 1:length(theta)){
   
 ```
 
-**Figure S7** Boxplots of the 95% CIs of estimated dispersal parameter (Laplace) with individual-level heterogeneity in true recapture probability $\phi_i$ ($\rm{logit}~\phi_i \sim Normal(\rm{logit}~\phi, 1)$). Results are shown in relation to true dispersal parameter (x-axis; $\delta_{true}$) and different sampling designs (panels). Boxplots show the median (thick line in the center of the box), the 25% and 75% quantiles (limits of boxes), and ranges within 1.5 times the height of the box (whiskers). Data points outside of whiskers are shown as dots. Values of design factors are shown on the top of each panel ($N$ the number of individuals marked, $L$ the section length, and $\phi$ the recapture probability). Dispersal parameter $\delta$ (the scale parameter of a Laplace distribution) was estimated using three dispersal models (the simple dispersal model, gray box; the truncated dispersal model, blue box; the dispersal observation model, red box).
+**Figure S7** Boxplots of the 95% CIs of estimated dispersal parameter (Laplace) with individual-level heterogeneity in true recapture probability $\phi_i$ ($\rm{logit}~\phi_i \sim Normal(\rm{logit}~\phi, 1)$). Results are shown in relation to true dispersal parameter (x-axis; $\delta_{true}$) and different sampling designs (panels). Boxplots show the median (thick line in the center of the box), the 25% and 75% quantiles (limits of boxes), and ranges within 1.5 times the height of the box (whiskers). Data points outside of whiskers are shown as dots. Values of design factors are shown on the top of each panel ($N$ the number of individuals marked, $L$ the section length, and $\phi$ the recapture probability). Dispersal parameter $\delta_{true}$ (the scale parameter of a Laplace distribution) was estimated using three dispersal models (the simple dispersal model, gray box; the truncated dispersal model, blue box; the dispersal observation model, red box).
 
 \pagebreak
 
@@ -530,4 +473,4 @@ for(i in 1:length(theta)){
 
 ```
 
-**Figure S8** Boxplots of the 95% CIs of estimated dispersal parameter (Gaussian) with individual-level heterogeneity in true recapture probability $\phi_i$ ($\rm{logit}~\phi_i \sim Normal(\rm{logit}~\phi, 1)$). Results are shown in relation to true dispersal parameter (x-axis; $\sigma_{true}$) and different sampling designs (panels). Boxplots show the median (thick line in the center of the box), the 25% and 75% quantiles (limits of boxes), and ranges within 1.5 times the height of the box (whiskers). Data points outside of whiskers are shown as dots. Values of design factors are shown on the top of each panel ($N$ the number of individuals marked, $L$ the section length, and $\phi$ the recapture probability). Dispersal parameter $\sigma$ (the standard deviation of a Gaussian distribution) was estimated using three dispersal models (the simple dispersal model, gray box; the truncated dispersal model, blue box; the dispersal observation model, red box).
+**Figure S8** Boxplots of the 95% CIs of estimated dispersal parameter (Gaussian) with individual-level heterogeneity in true recapture probability $\phi_i$ ($\rm{logit}~\phi_i \sim Normal(\rm{logit}~\phi, 1)$). Results are shown in relation to true dispersal parameter (x-axis; $\sigma_{true}$) and different sampling designs (panels). Boxplots show the median (thick line in the center of the box), the 25% and 75% quantiles (limits of boxes), and ranges within 1.5 times the height of the box (whiskers). Data points outside of whiskers are shown as dots. Values of design factors are shown on the top of each panel ($N$ the number of individuals marked, $L$ the section length, and $\phi$ the recapture probability). Dispersal parameter $\sigma_{true}$ (the standard deviation of a Gaussian distribution) was estimated using three dispersal models (the simple dispersal model, gray box; the truncated dispersal model, blue box; the dispersal observation model, red box).
