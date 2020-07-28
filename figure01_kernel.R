@@ -25,7 +25,8 @@
     pivot_longer(cols = -X, names_to = "Parameter", values_to = "Density") %>%
     mutate(Kernel = "Gaussian") %>%
     full_join(YL) %>%
-    mutate(Parameter = factor(Parameter, levels = unique(Parameter) ) ) -> Y
+    mutate(Parameter = factor(Parameter, levels = unique(Parameter) ) ) %>%
+    mutate(Kernel = factor(Kernel, levels = c("Laplace", "Gaussian"), ordered = T) ) -> Y
   
 # Plot ----
   ggplot(Y) +

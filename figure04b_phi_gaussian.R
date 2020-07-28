@@ -26,7 +26,7 @@
                    alpha = 0.4, lwd = 0.1, outlier.size = 0.5, outlier.stroke = 0) +
       geom_hline(aes(yintercept = PHI), lwd = 0.5, color = "grey60", alpha = 0.4) +
       scale_y_continuous(limits = c(0,1) ) +
-      facet_wrap(.~N_f + L_f + phi_f, ncol = 3, dir = "v", scale = "free",
+      facet_wrap(.~N_f + L_f + phi_f, ncol = 4, scale = "free",
                  labeller = labeller(.cols = label_parsed, .multi_line = F)) +
       theme(plot.margin= unit(c(1, 1, 2, 2), "lines"),
             axis.title.x = element_text(vjust = -5),
@@ -39,7 +39,7 @@
             axis.line = element_line(color = "grey50")) +
       labs(x = xtitle, y = ytitle) -> p
     
-  tag_facet(p) +
-    theme(strip.text = element_text())
-  
+    tag_facet(p) +
+      theme(strip.text = element_text())
+    
   ggsave("figure7.tiff", width = 9, height = 7)
