@@ -20,7 +20,7 @@
   
 # Plot ----
   ggplot(dat) +
-    geom_hline(aes(yintercept = 0), lwd = 0.01, color = "grey60", alpha = 0.4) +
+    geom_hline(aes(yintercept = 0), lwd = 0.5, color = "grey60", alpha = 0.4) +
     geom_boxplot(aes(y = bias, x = as.factor(THETA), fill = model_code, color = model_code),
                  alpha = 0.4, lwd = 0.1, outlier.size = 0.5, outlier.stroke = 0) +
     scale_colour_manual(values = COL, name = "Model", labels = c("Simple", "Truncated", "Disp-obs")) +
