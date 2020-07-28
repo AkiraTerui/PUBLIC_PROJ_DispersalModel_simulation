@@ -5,6 +5,9 @@ Author: Akira Terui
 
 ### Content
 
+#### Supporting Information
+* `ecores_support-info.Rmd`: Rmarkdown for Supporting Information  
+
 #### Data management
 
 * `datasort01_laplace.R`: merging the results of Laplace models  
@@ -24,7 +27,6 @@ Author: Akira Terui
 * `figure04a_phi_laplace.R`: script for figure 6  
 * `figure04b_phi_gaussian.R`: script for figure 7  
 * `function_simdata_ver5.R`: function for simulated data  
-* `ecores_support-info.Rmd`: Rmarkdown for Supporting Information  
 
 #### Data
 
