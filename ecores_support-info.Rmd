@@ -62,7 +62,7 @@ theta <- seq(50, 300, by = 50)
 
 TableTEXT <- NULL
 for(i in 1:length(theta)){
-TableTEXT[i] <- paste0("**`r names(DL)[",i,"]`** ", "Bias of dispersal parameter estimated from simulated datasets with the true dispersal parameter $\\theta_{true} =`r theta[",i,"]`$ ($\\theta_{true}$ is either $\\delta_{true}$ [Laplace] or $\\sigma_{true}$ [Gaussian]).The percent bias of estimated dispersal parameter was calculated as $\\%~bias = 100~E(\\theta_{est} - \\theta_{true})/\\theta_{true}$, where  $E(\\theta_{est} - \\theta_{true})$ is the average of 50 estimates for a given simulation scenario (each row corresponds to a simulation scenario). Subscripts denote different dispersal models (*simple*, the simple dispersal model; *trunc*, the truncated dispersal model; *disp-obs*, the dispersal-observation model). *N*, *L*, and $\\phi$ are the design factors used to generate simulated datasets. *N* is the number of marked individuals, *L* the section length (m), and $\\phi$ the recapture probability.
+TableTEXT[i] <- paste0("**`r names(DL)[",i,"]`** ", "Bias of dispersal parameter estimated from simulated datasets with the true dispersal parameter $\\theta_{true} =`r theta[",i,"]`$ ($\\theta_{true}$ is either $\\delta_{true}$ [Laplace] or $\\sigma_{true}$ [Gaussian]).The mean % bias of estimated dispersal parameter was calculated as $\\%~bias = 100~E(\\theta_{est} - \\theta_{true})/\\theta_{true}$, where  $E(\\theta_{est} - \\theta_{true})$ is the average of 50 estimates for a given simulation scenario (each row corresponds to a simulation scenario). Subscripts denote different dispersal models (*simple*, the simple dispersal model; *trunc*, the truncated dispersal model; *disp-obs*, the dispersal-observation model). *N*, *L*, and $\\phi$ are the design factors used to generate simulated datasets. *N* is the number of marked individuals, *L* the section length (m), and $\\phi$ the recapture probability.
 ")
 }
 
@@ -89,7 +89,7 @@ for(i in 1:length(theta)){
 
 # Read data ----
   rm(list=ls(all.names=T))
-  source("datasort01_Laplace.R")
+  source("datasort01_laplace.R")
 
   ## axis titles
   xtitle <- expression("True dispersal parameter"~delta[italic(true)]~"(m)")
@@ -139,7 +139,7 @@ for(i in 1:length(theta)){
 
 # Read data ----
   rm(list=ls(all.names=T))
-  source("datasort02_Gaussian.R")
+  source("datasort02_gaussian.R")
 
 ## axis titles
   xtitle <- expression("True dispersal parameter"~sigma[italic(true)]~"(m)")
@@ -188,7 +188,7 @@ for(i in 1:length(theta)){
 ```{r FigureS3, echo = F, warning = F}
 # Read data ----
   rm(list=ls(all.names=T))
-  source("datasort03_Laplace_hetero.R")
+  source("datasort03_laplace_hetero.R")
 
 ## axis titles
   xtitle <- expression("True dispersal parameter"~delta[italic(true)]~"(m)")
@@ -237,7 +237,7 @@ for(i in 1:length(theta)){
 ```{r FigureS4, echo = F, warning = F}
 # Read data ----
   rm(list=ls(all.names=T))
-  source("datasort04_Gaussian_hetero.R")
+  source("datasort04_gaussian_hetero.R")
 
 ## axis titles
   xtitle <- expression("True dispersal parameter"~sigma[italic(true)]~"(m)")
@@ -286,7 +286,7 @@ for(i in 1:length(theta)){
 ```{r FigureS5, echo = F, warning = F}
 # Read data ----
   rm(list=ls(all.names=T))
-  source("datasort03_Laplace_hetero.R")
+  source("datasort03_laplace_hetero.R")
   
   ## axis titles
   xtitle <- expression("True dispersal parameter"~delta[italic(true)]~"(m)")
@@ -335,7 +335,7 @@ for(i in 1:length(theta)){
 
 # Read data ----
   rm(list=ls(all.names=T))
-  source("datasort04_Gaussian_hetero.R")
+  source("datasort04_gaussian_hetero.R")
   
   ## axis titles
   xtitle <- expression("True dispersal parameter"~sigma[italic(true)]~"(m)")
@@ -384,7 +384,7 @@ for(i in 1:length(theta)){
 
 # Read data ----
   rm(list=ls(all.names=T))
-  source("datasort03_Laplace_hetero.R")
+  source("datasort03_laplace_hetero.R")
 
   ## axis titles
   xtitle <- expression("True dispersal parameter"~delta[italic(true)]~"(m)")
@@ -433,7 +433,7 @@ for(i in 1:length(theta)){
 
 # Read data ----
   rm(list=ls(all.names=T))
-  source("datasort04_Gaussian_hetero.R")
+  source("datasort04_gaussian_hetero.R")
 
 ## axis titles
   xtitle <- expression("True dispersal parameter"~sigma[italic(true)]~"(m)")
