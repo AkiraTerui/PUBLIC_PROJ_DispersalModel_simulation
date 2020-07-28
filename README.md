@@ -33,7 +33,7 @@ Author: Akira Terui
 * `result` directory: simulation results. Files were named after the following rule `sim_model_MODELTYPE_PHI-SETTING_DISTRIBUTION.csv`  
 
   ##### Column specification
-  * `N`: the number of marked indivudlas
+  * `N`: the number of marked individulas
   * `LEN`: section length
   * `DELTA` or `SIGMA`: true dispersal parameter
   * `Pcap`: proportion of recapture
