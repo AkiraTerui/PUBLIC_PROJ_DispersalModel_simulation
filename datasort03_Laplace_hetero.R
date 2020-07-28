@@ -1,6 +1,5 @@
 
 # Read data ----
-  #rm(list = ls(all.names = T))
   d1 <- read.csv("result/sim_model_simple_hetero_Laplace2020-05-17.csv")
   d2 <- read.csv("result/sim_model_truncated_hetero_Laplace2020-05-19.csv")
   d3 <- read.csv("result/sim_model_disp_obs_hetero_Laplace2020-05-19.csv")

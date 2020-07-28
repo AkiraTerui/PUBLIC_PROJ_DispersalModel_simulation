@@ -1,6 +1,5 @@
 
 # Read data -----
-  #rm(list = ls(all.names = T))
   d1 <- read.csv("result/sim_model_simple_Gaussian2020-05-15.csv")
   d2 <- read.csv("result/sim_model_truncated_Gaussian2020-05-15.csv")
   d3 <- read.csv("result/sim_model_disp_obs_Gaussian2020-05-15.csv")
