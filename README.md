@@ -16,8 +16,8 @@ Author: Akira Terui
 `figure02b_pstay_gaussian.R`: script for figure 3  
 `figure03a_delta.R`: script for figure 4  
 `figure03b_sigma.R`: script for figure 5  
-`figure05a_phi_laplace.R`: script for figure 6  
-`figure05b_phi_gaussian.R`: script for figure 7  
+`figure04a_phi_laplace.R`: script for figure 6  
+`figure04b_phi_gaussian.R`: script for figure 7  
 `function_simdata_ver5.R`: function for simulated data  
 `ecores_support-info.Rmd`: Rmarkdown for Supporting Information  
 
