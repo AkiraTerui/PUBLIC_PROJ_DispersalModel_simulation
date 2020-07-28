@@ -30,11 +30,30 @@ Author: Akira Terui
 
 #### Data
 
-* `/result`: simulation results  
+* `result` directory: simulation results. Files were named after the following rule `sim_model_MODELTYPE_PHI-SETTING_DISTRIBUTION.csv`  
 
-#### Bayesian modeling (/bayes-model)
+  ##### Column specification
+  * `N`: the number of marked indivudlas
+  * `LEN`: section length
+  * `DELTA` or `SIGMA`: true dispersal parameter
+  * `Pcap`: proportion of recapture
+  * `Pstay`: proportion of stayers
+  * `delta_lower` or `sigma_lower`: lower 95% CI of estimated dispersal parameter
+  * `med_lower`: median estimate of dispersal parameter
+  * `delta_lower` or `sigma_upper`: upper 95% CI of estimated dispersal parameter 
+  * `phi_lower`: lower 95% CI of estimated recapture probability
+  * `phi_med`: median estimate of recapture probability
+  * `phi_upper`: upper 95% CI of estimated recapture probability
+  * `R_hat_delta` or `R_hat_sigma`: R hat value of estimated dispersal parameters
+  * `R_hat_phi`: R hat value of estimated drecapture probability
+  * `MCMCiter`: MCMC iterations
+  * `Burn_in`: MCMC burnin
+  * `N_thin`: MCMC thinning
+  * `N_sample`: MCMC samples
 
-##### Laplace (/Laplace)
+#### Bayesian modeling (`bayes-model` directory)
+
+##### Laplace (`laplace` directory)
 
 * `inits01_simple_laplace.R`: script to run a simple dispersal model  
 * `inits02_truncated_laplace.R`: script to run a truncated dispersal model   
@@ -46,7 +65,7 @@ Author: Akira Terui
 * `model_truncated_laplace_v1.R`: JAGS script for a truncated dispersal model  
 * `model_disp_obs_laplace_v1.R`: JAGS script for a dispersal-observation model  
 
-##### Gaussian (/Gaussian)
+##### Gaussian (`gaussian` directory)
 
 * `inits01_simple_gaussian.R`: script to run a simple dispersal model  
 * `inits02_truncated_gaussian.R`: script to run a truncated dispersal model   
