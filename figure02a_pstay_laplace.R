@@ -7,15 +7,14 @@
   source("datasort01_laplace.R")
 
 ## axis titles
-  xtitle <- expression("True dispersal parameter"~delta[true]~"(m)")
+  xtitle <- expression("True dispersal parameter"~delta[italic(true)]~"(m)")
   ytitle <- expression("Proportion of stayers or recaptures")
 
 ## panel label
   dat$phi.label <- sprintf('phi=="%.1f"', dat$PHI); dat$phi_f <- factor(dat$phi.label, levels = unique(dat$phi.label) )
-  dat$N.label <- sprintf('N=="%i"', dat$N); dat$N_f <- factor(dat$N.label, levels = unique(dat$N.label) )
-  dat$L.label <- sprintf('L=="%i"', dat$LEN); dat$L_f <- factor(dat$L.label, levels = unique(dat$L.label) )
-  dat %>%
-    pivot_longer(cols = c(Pstay, Pcap), names_to = "Ptype", values_to = "P") -> dat_long
+  dat$N.label <- sprintf('italic(N)=="%i"', dat$N); dat$N_f <- factor(dat$N.label, levels = unique(dat$N.label) )
+  dat$L.label <- sprintf('italic(L)=="%i"', dat$LEN); dat$L_f <- factor(dat$L.label, levels = unique(dat$L.label) )
+  dat %>% pivot_longer(cols = c(Pstay, Pcap), names_to = "Ptype", values_to = "P") -> dat_long
   
 ## plot colors
   COL <- c(rgb(0,0,0), rgb(1,0,0))
@@ -27,7 +26,7 @@
     scale_colour_manual(values = COL, name = "", labels = c("Recapture", "Stayer")) +
     scale_fill_manual(values = COL, name = "", labels = c("Recapture", "Stayer")) +
     scale_y_continuous(limits = c(0,1) ) +
-    facet_wrap(.~N_f + L_f + phi_f, ncol = 3, dir = "v", scale = "free",
+    facet_wrap(.~N_f + L_f + phi_f, ncol = 4, scale = "free",
                labeller = labeller(.cols = label_parsed, .multi_line = F)) +
     theme(plot.margin= unit(c(1, 1, 2, 2), "lines"),
           axis.title.x = element_text(vjust = -5),
@@ -44,4 +43,4 @@
   tag_facet(p, x = 5) +
     theme(strip.text = element_text())
   
-  ggsave("figure2.tiff", width = 8, height = 8)
+  ggsave("figure2.tiff", width = 9, height = 7)
