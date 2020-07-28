@@ -12,8 +12,15 @@
   datg <- dat %>% mutate(Kernel = "Gaussian")
   
   dat <- bind_rows(datl, datg)
-
-# Data format
+  
+# summary for table 2
+  summary_table = dat %>%
+    group_by(Kernel, N, LEN, PHI, THETA, model_code) %>%
+    summarise(Bias = mean(bias)) %>%
+    group_by(Kernel, model_code) %>%
+    summarise(mean(Bias), min(Bias), max(Bias) )
+  
+# summary for SI tables
   dat_table = dat %>%
     group_by(Kernel, N, LEN, PHI, THETA, model_code) %>%
     summarize(Bias = round(mean(bias),1) ) %>%

@@ -15,7 +15,7 @@ Author: Akira Terui
 * `datasort03_laplace_hetero.R`: merging the results of Laplace models (recapture probability varies among individuals)  
 * `datasort04_gaussian_hetero.R`: merging the results of Gaussian models (recapture probability varies among individuals)  
 * `datasort05_basic-stats.R`: basic statistics (the range of the proportion of stayers/recaptures)  
-* `datasort06_table-si.R`: scripts for SI tables  
+* `datasort06_table.R`: scripts for tables  
 
 #### Figures
 

@@ -51,7 +51,7 @@ editor_options:
 
 ```{r TableDATA, include = F}
 
-source("datasort06_table-si.R")
+source("datasort06_table.R")
 
 ```
 
